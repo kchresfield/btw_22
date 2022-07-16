@@ -23,7 +23,7 @@ app.use(function (req, res, next) {
     next();
     });
 
-app.post("/btw1", async (req, res) => {
+app.post("/send2FA", async (req, res) => {
     const phoneNumber = req.body.user.phoneNumber;
     const name = req.body.user.name;
     service.verifications.create({
@@ -32,8 +32,18 @@ app.post("/btw1", async (req, res) => {
     })
     .then(resp => {
         console.log(resp.status)
-        res.send(200, "done")
+        res.status(200).send("verification code sent")
     })
+})
+
+app.post("/check2FA", async (req, res) => {
+    service.verificationChecks.create({
+        to: `+1${req.body.data.phoneNumber}`, 
+        code: req.body.data.code
+    })
+    .then(verification_check => {
+        res.status(200).send(verification_check)
+    });
 })
 
 app.listen(port, ()=> {
